@@ -1,0 +1,31 @@
+stages:
+  data_processing:
+    cmd: python Model/data_processing.py
+    deps:
+      - Data/bitcoin_data.csv   # Dataset file
+    outs:
+      - Model/data/X_train_scaled.npy
+      - Model/data/X_test_scaled.npy
+      - Model/data/y_train_scaled.npy
+      - Model/data/y_test_scaled.npy
+      - Model/data/feature_scaler.pkl
+      - Model/data/target_scaler.pkl
+
+  train_model:
+    cmd: python Model/train_model.py
+    deps:
+      - Model/data/X_train_scaled.npy
+      - Model/data/y_train_scaled.npy
+      - Model/data/feature_scaler.pkl
+      - Model/data/target_scaler.pkl
+    outs:
+      - Model/model/lstm_model.h5
+
+  evaluate_model:
+    cmd: python Model/evaluate_model.py
+    deps:
+      - Model/model/lstm_model.h5
+      - Model/data/X_test_scaled.npy
+      - Model/data/y_test_scaled.npy
+    outs:
+      - Model/model/evaluation_results.json
